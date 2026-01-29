@@ -1,0 +1,495 @@
+import React, { useState } from 'react';
+import { 
+  Cpu, 
+  MessageSquare, 
+  Brain, 
+  Trophy, 
+  Zap, 
+  Plus, 
+  ArrowRight,
+  Info,
+  Calendar,
+  Sparkles,
+  Bot,
+  Snowflake,
+  ShieldCheck,
+  Target,
+  X,
+  ExternalLink,
+  Youtube,
+  FileText,
+  PlayCircle
+} from 'lucide-react';
+
+const initialMilestones = [
+  {
+    id: 1,
+    year: "1950",
+    title: "The Turing Test",
+    summary: "Alan Turing proposes a test of a machine's ability to exhibit intelligent behavior.",
+    details: "In 'Computing Machinery and Intelligence,' Turing sidestepped the question 'Can machines think?' with a practical game of imitation. He suggested that if a human interrogator couldn't tell the difference between a computer and a person through text, the machine passed.",
+    facts: [
+      "Turing originally called it 'The Imitation Game'.",
+      "He predicted that by 2000, machines would have a 30% chance of fooling a human for five minutes."
+    ],
+    links: [
+      { label: "Watch Explanation", url: "https://www.youtube.com/watch?v=sXx-PpEBR7k&pp=ygUPVGhlIHR1cmluZyB0ZXN0", type: "video" }
+    ],
+    icon: <MessageSquare className="w-6 h-6" />,
+    color: "bg-blue-500"
+  },
+  {
+    id: 8,
+    year: "1951",
+    title: "SNARC: The First Neural Net",
+    summary: "Marvin Minsky builds the first artificial neural network using vacuum tubes.",
+    details: "The Stochastic Neural Analog Reinforcement Calculator (SNARC) used 3,000 vacuum tubes and a B-29 bomber's automatic pilot mechanism to simulate 40 neurons. It was designed to find its way through a maze, much like a rat.",
+    facts: [
+      "The 'neurons' were built from bulky vacuum tubes because transistors were still brand new.",
+      "It actually worked, proving that hardware could mimic biological learning processes."
+    ],
+    icon: <Brain className="w-6 h-6" />,
+    color: "bg-slate-500"
+  },
+  {
+    id: 2,
+    year: "1956",
+    title: "The Dartmouth Conference",
+    summary: "The official birth of 'Artificial Intelligence' as a field of study.",
+    details: "John McCarthy and his colleagues organized an eight-week summer workshop at Dartmouth. They assumed that every aspect of learning or intelligence could be so precisely described that a machine could simulate it.",
+    facts: [
+      "The term 'Artificial Intelligence' was coined by John McCarthy specifically for this proposal.",
+      "The organizers famously expected to solve most of AI over just one single summer."
+    ],
+    links: [
+      { label: "Conference History", url: "https://www.youtube.com/watch?v=3FX2wmJ1fAQ", type: "video" }
+    ],
+    icon: <Cpu className="w-6 h-6" />,
+    color: "bg-indigo-500"
+  },
+  {
+    id: 3,
+    year: "1966",
+    title: "ELIZA is Born",
+    summary: "The world's first chatbot, created by Joseph Weizenbaum at MIT.",
+    details: "ELIZA simulated a Rogerian psychotherapist. It mostly just reflected users' statements back as questions, yet people became deeply attached to it, even asking Weizenbaum to leave the room for privacy.",
+    facts: [
+      "The 'ELIZA effect' describes our tendency to anthropomorphize machines based on very little evidence.",
+      "ELIZA was only about 200 lines of code."
+    ],
+    links: [
+      { label: "Try ELIZA", url: "https://www.masswerk.at/eliza/", type: "demo" },
+      { label: "Documentary Clip", url: "https://www.youtube.com/watch?v=zhxNI7V2IxM", type: "video" }
+    ],
+    icon: <Bot className="w-6 h-6" />,
+    color: "bg-purple-500"
+  },
+  {
+    id: 9,
+    year: "1974-1980",
+    title: "The First AI Winter",
+    summary: "A period of reduced funding and interest as the early hype bubble bursts.",
+    details: "After years of bold promises that failed to materialize, governments and investors pulled back. The Lighthill Report in the UK and DARPA's shift in focus led to a 'freeze' in research funding.",
+    facts: [
+      "The 'winter' was triggered by the realization that machines couldn't handle the 'combinatorial explosion' of real-world data.",
+      "The term wasn't coined until 1984, looking back at the slump."
+    ],
+    icon: <Snowflake className="w-6 h-6" />,
+    color: "bg-sky-700"
+  },
+  {
+    id: 10,
+    year: "1980s",
+    title: "Rise of Expert Systems",
+    summary: "AI enters the corporate world through rule-based logic.",
+    details: "Instead of trying to 'think,' Expert Systems like XCON used thousands of 'if-then' rules to solve specific problems. Companies used them to configure computer systems and diagnose diseases, proving AI had commercial value.",
+    facts: [
+      "XCON reportedly saved Digital Equipment Corporation $40 million a year.",
+      "This era proved that 'narrow AI' was often more useful than trying to build a general brain."
+    ],
+    icon: <ShieldCheck className="w-6 h-6" />,
+    color: "bg-orange-600"
+  },
+  {
+    id: 11,
+    year: "1986",
+    title: "The Backpropagation Revival",
+    summary: "A breakthrough in how neural networks learn from their mistakes.",
+    details: "Geoffrey Hinton and his colleagues popularized backpropagation, a mathematical method that allowed multi-layer neural networks to adjust their weights efficiently. This laid the foundation for modern deep learning.",
+    facts: [
+      "Backpropagation allows a network to see 'how wrong it was' and trace the error back to specific neurons.",
+      "This discovery rescued neural networks from another decade of obscurity."
+    ],
+    links: [
+      { label: "Short Explanation", url: "https://www.youtube.com/shorts/NHKht6p9X1Q", type: "video" }
+    ],
+    icon: <Zap className="w-6 h-6" />,
+    color: "bg-yellow-500"
+  },
+  {
+    id: 4,
+    year: "1997",
+    title: "Deep Blue vs. Kasparov",
+    summary: "IBM's Deep Blue defeats world chess champion Garry Kasparov.",
+    details: "In a six-game match, Deep Blue used massive computing power to defeat the world's best player. It was a watershed moment, though some critics argued it was just 'brute force' rather than 'real' intelligence.",
+    facts: [
+      "Deep Blue could evaluate 200 million positions per second.",
+      "Kasparov famously suspected human intervention during the second game."
+    ],
+    links: [
+      { label: "Match Highlights", url: "https://www.youtube.com/watch?v=KF6sLCeBj0s", type: "video" }
+    ],
+    icon: <Trophy className="w-6 h-6" />,
+    color: "bg-amber-500"
+  },
+  {
+    id: 5,
+    year: "2012",
+    title: "The AlexNet Moment",
+    summary: "A neural network crushes the ImageNet competition, starting the DL era.",
+    details: "Alex Krizhevsky used a Convolutional Neural Network and GPUs to dominate image recognition tasks. This proved that deep networks plus massive data equaled a quantum leap in performance.",
+    facts: [
+      "The network was trained on just two NVIDIA GTX 580 GPUs.",
+      "It lowered the error rate in image classification by a staggering 10% in one year."
+    ],
+    icon: <Brain className="w-6 h-6" />,
+    color: "bg-rose-500"
+  },
+  {
+    id: 12,
+    year: "2016",
+    title: "AlphaGo's Masterpiece",
+    summary: "DeepMind's AlphaGo defeats Lee Sedol in the ancient game of Go.",
+    details: "Go was thought to be too intuitive for computers to master for decades. AlphaGo used reinforcement learning to discover strategies that humans had never seen in 2,500 years of play.",
+    facts: [
+      "AlphaGo's 'Move 37' was so unexpected that commentators thought it was a mistake.",
+      "It learned by playing against itself millions of times, far exceeding any human experience."
+    ],
+    links: [
+      { label: "The Move 37 Moment", url: "https://www.youtube.com/watch?v=8tq1C8spV_g", type: "video" }
+    ],
+    icon: <Target className="w-6 h-6" />,
+    color: "bg-teal-600"
+  },
+  {
+    id: 6,
+    year: "2017",
+    title: "Attention Is All You Need",
+    summary: "Google researchers introduce the Transformer architecture.",
+    details: "This paper introduced the 'Attention' mechanism, allowing models to process context globally rather than word-by-word. It is the engine inside every modern LLM, from GPT-4 to Claude.",
+    facts: [
+      "The architecture was originally designed for machine translation, not generating creative text.",
+      "The title of the paper has become one of the most famous slogans in computer science."
+    ],
+    links: [
+      { label: "Read the Paper", url: "https://arxiv.org/pdf/1706.03762", type: "paper" }
+    ],
+    icon: <Zap className="w-6 h-6" />,
+    color: "bg-emerald-500"
+  },
+  {
+    id: 7,
+    year: "2022-Present",
+    title: "The Generative Age",
+    summary: "ChatGPT and the rise of consumer-facing Generative AI.",
+    details: "The release of ChatGPT brought AI into the mainstream. Machines can now write code, draft legal briefs, and compose music, sparking global debates about ethics, labor, and the nature of creativity.",
+    facts: [
+      "ChatGPT reached 100 million users in two months—the fastest growth in history.",
+      "Modern models are trained on tokens equivalent to thousands of human lifetimes of reading."
+    ],
+    icon: <Sparkles className="w-6 h-6" />,
+    color: "bg-cyan-500"
+  }
+];
+
+const App = () => {
+  const [milestones, setMilestones] = useState(initialMilestones);
+  const [selectedId, setSelectedId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newMilestone, setNewMilestone] = useState({
+    year: '',
+    title: '',
+    summary: '',
+    details: ''
+  });
+
+  const handleAddMilestone = (e) => {
+    e.preventDefault();
+    if (!newMilestone.year || !newMilestone.title) return;
+
+    const id = Math.max(...milestones.map(m => m.id)) + 1;
+    const milestoneToAdd = {
+      ...newMilestone,
+      id,
+      facts: ["User submitted milestone"],
+      icon: <Sparkles className="w-6 h-6" />,
+      color: "bg-indigo-500"
+    };
+
+    // Sort milestones by year (simple string compare for now, sufficient for YYYY)
+    const updatedMilestones = [...milestones, milestoneToAdd].sort((a, b) => 
+      parseInt(a.year) - parseInt(b.year)
+    );
+
+    setMilestones(updatedMilestones);
+    setIsModalOpen(false);
+    setNewMilestone({ year: '', title: '', summary: '', details: '' });
+    setSelectedId(id); // Auto-expand the new item
+  };
+
+  const getLinkIcon = (type) => {
+    switch (type) {
+      case 'video': return <Youtube size={14} />;
+      case 'paper': return <FileText size={14} />;
+      case 'demo': return <PlayCircle size={14} />;
+      default: return <ExternalLink size={14} />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-indigo-500/30">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-950/80 border-b border-slate-800 p-4">
+        <div className="max-w-5xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+              <Brain className="text-white w-6 h-6" />
+            </div>
+            <h1 className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+              Silicon Odyssey
+            </h1>
+          </div>
+          <nav className="hidden sm:flex gap-6 text-sm font-medium text-slate-400 items-center">
+            <span className="text-indigo-400">The AI Archive</span>
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full transition-all shadow-lg shadow-indigo-500/20 flex items-center gap-2"
+            >
+              <Plus size={14} /> Add Event
+            </button>
+          </nav>
+        </div>
+      </header>
+
+      <main className="max-w-5xl mx-auto px-6 py-12 lg:py-20">
+        <div className="text-center mb-16 space-y-4">
+          <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
+            The Long Road to <span className="text-indigo-500">Intelligence</span>
+          </h2>
+          <p className="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">
+            From wartime logic and vacuum tubes to global neural networks. Explore the moments that shifted the world, one line of code at a time.
+          </p>
+        </div>
+
+        <div className="relative">
+          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-500 via-purple-500 to-emerald-500 opacity-20 md:-translate-x-1/2 rounded-full" />
+
+          <div className="space-y-12 md:space-y-24">
+            {milestones.map((item, index) => (
+              <div 
+                key={item.id} 
+                className={`relative flex items-center gap-8 md:gap-0 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
+              >
+                <div className="absolute left-4 md:left-1/2 -translate-x-1/2 z-10">
+                  <button
+                    onClick={() => setSelectedId(selectedId === item.id ? null : item.id)}
+                    className={`group relative w-10 h-10 rounded-full border-4 border-slate-950 transition-all duration-300 transform hover:scale-125 flex items-center justify-center ${item.color} ${selectedId === item.id ? 'ring-4 ring-white/20' : ''}`}
+                  >
+                    <div className="absolute inset-0 rounded-full animate-ping opacity-20 group-hover:opacity-40" />
+                    <span className="text-white transform group-hover:rotate-12 transition-transform">
+                      {React.cloneElement(item.icon, { size: 18 })}
+                    </span>
+                  </button>
+                </div>
+
+                <div className={`w-full md:w-[45%] pl-12 md:pl-0 ${index % 2 === 0 ? 'md:pr-12 text-left md:text-right' : 'md:pl-12 text-left'}`}>
+                  <div 
+                    onClick={() => setSelectedId(selectedId === item.id ? null : item.id)}
+                    className={`p-6 rounded-2xl border transition-all duration-500 cursor-pointer group hover:border-indigo-500/50 hover:bg-slate-900/50 ${selectedId === item.id ? 'bg-slate-900 border-indigo-500 ring-1 ring-indigo-500/30 shadow-2xl shadow-indigo-500/10' : 'bg-slate-900/30 border-slate-800'}`}
+                  >
+                    <div className={`flex items-center gap-2 mb-2 ${index % 2 === 0 ? 'md:justify-end' : 'md:justify-start'}`}>
+                      <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                      <span className={`text-sm font-bold tracking-widest uppercase ${selectedId === item.id ? 'text-indigo-400' : 'text-slate-500'}`}>
+                        {item.year}
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-bold mb-2 group-hover:text-indigo-400 transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                      {item.summary}
+                    </p>
+                    
+                    <div className={`overflow-hidden transition-all duration-500 ease-in-out ${selectedId === item.id ? 'max-h-[800px] opacity-100 mt-6' : 'max-h-0 opacity-0'}`}>
+                      <div className={`pt-6 border-t border-slate-800 space-y-6 ${index % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>
+                        <div className="space-y-2">
+                          <h4 className={`text-xs font-semibold text-slate-500 uppercase tracking-tighter flex items-center gap-2 ${index % 2 === 0 ? 'md:justify-end' : 'md:justify-start'}`}>
+                            <Info size={14} /> The Story
+                          </h4>
+                          <p className="text-slate-300 text-sm italic leading-relaxed">
+                            {item.details}
+                          </p>
+                        </div>
+
+                        {item.links && item.links.length > 0 && (
+                          <div className="space-y-2">
+                             <h4 className={`text-xs font-semibold text-slate-500 uppercase tracking-tighter flex items-center gap-2 ${index % 2 === 0 ? 'md:justify-end' : 'md:justify-start'}`}>
+                                <ExternalLink size={14} /> Sources & Media
+                             </h4>
+                             <div className={`flex flex-wrap gap-2 ${index % 2 === 0 ? 'md:justify-end' : 'md:justify-start'}`}>
+                               {item.links.map((link, lIdx) => (
+                                 <a 
+                                   key={lIdx} 
+                                   href={link.url}
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-800 hover:bg-indigo-600/20 hover:text-indigo-400 border border-slate-700 transition-colors text-xs text-slate-300"
+                                   onClick={(e) => e.stopPropagation()}
+                                 >
+                                   {getLinkIcon(link.type)}
+                                   {link.label}
+                                 </a>
+                               ))}
+                             </div>
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-1 gap-3">
+                          {item.facts.map((fact, fIdx) => (
+                            <div key={fIdx} className="flex gap-3 items-start p-3 rounded-lg bg-slate-950/50 border border-slate-800/50 text-left">
+                              <div className="mt-1">
+                                <Plus size={14} className="text-indigo-500" />
+                              </div>
+                              <p className="text-xs text-slate-400 leading-snug">
+                                {fact}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className={`mt-4 flex items-center justify-between text-xs ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+                      <span className="text-slate-600 font-medium italic">Click for depth</span>
+                      <ArrowRight size={14} className={`transition-transform duration-300 ${selectedId === item.id ? 'rotate-90 text-indigo-400' : 'text-slate-700'} ${index % 2 === 0 ? 'md:-rotate-180' : ''}`} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <section className="mt-32 p-10 rounded-[2.5rem] bg-gradient-to-br from-indigo-900/10 via-slate-900/50 to-purple-900/10 border border-indigo-500/10 text-center relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
+          <div className="max-w-xl mx-auto space-y-6 relative z-10">
+            <h3 className="text-3xl font-bold tracking-tight">The Future is Unwritten</h3>
+            <p className="text-slate-400 leading-relaxed text-lg">
+              We are currently in a period of unprecedented acceleration. Every day, the boundaries of what machines can process, understand, and create are being redrawn.
+            </p>
+            <div className="pt-4 flex flex-wrap justify-center gap-4">
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-full font-bold transition-all shadow-xl shadow-indigo-600/20 transform hover:-translate-y-1 flex items-center gap-2"
+              >
+                <Plus size={18} /> Add New Milestone
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-slate-900 py-12 mt-20">
+        <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-600">
+          <span>© 2025 AI History Project. Curated with care.</span>
+          <div className="flex gap-6">
+            <a href="#" className="hover:text-slate-400 transition-colors">Privacy</a>
+            <a href="#" className="hover:text-slate-400 transition-colors">Terms</a>
+            <a href="#" className="hover:text-slate-400 transition-colors">Contact</a>
+          </div>
+        </div>
+      </footer>
+
+      {/* Add Milestone Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+            <div className="p-6 border-b border-slate-800 flex justify-between items-center">
+              <h3 className="text-xl font-bold text-white">Add Milestone</h3>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="text-slate-500 hover:text-white transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <form onSubmit={handleAddMilestone} className="p-6 space-y-4">
+              <div className="grid grid-cols-4 gap-4">
+                <div className="col-span-1 space-y-2">
+                  <label className="text-xs font-semibold text-slate-500 uppercase">Year</label>
+                  <input 
+                    type="text" 
+                    required
+                    placeholder="2024"
+                    value={newMilestone.year}
+                    onChange={(e) => setNewMilestone({...newMilestone, year: e.target.value})}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
+                  />
+                </div>
+                <div className="col-span-3 space-y-2">
+                  <label className="text-xs font-semibold text-slate-500 uppercase">Title</label>
+                  <input 
+                    type="text" 
+                    required
+                    placeholder="The Singularity..."
+                    value={newMilestone.title}
+                    onChange={(e) => setNewMilestone({...newMilestone, title: e.target.value})}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-slate-500 uppercase">One-Line Summary</label>
+                <input 
+                  type="text" 
+                  required
+                  placeholder="A brief overview of the event..."
+                  value={newMilestone.summary}
+                  onChange={(e) => setNewMilestone({...newMilestone, summary: e.target.value})}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-slate-500 uppercase">Detailed Story</label>
+                <textarea 
+                  required
+                  rows={4}
+                  placeholder="Tell the full story here..."
+                  value={newMilestone.details}
+                  onChange={(e) => setNewMilestone({...newMilestone, details: e.target.value})}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors resize-none"
+                />
+              </div>
+              <div className="pt-4 flex justify-end gap-3">
+                <button 
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 text-slate-400 hover:text-white transition-colors text-sm font-medium"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold transition-colors shadow-lg shadow-indigo-600/20"
+                >
+                  Add to Timeline
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default App;
